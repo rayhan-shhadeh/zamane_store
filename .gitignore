@@ -4,7 +4,6 @@ dist/
 build/
 .env.local
 .env.example
-package.json
 tsconfig.json
 .vscode/
 .DS_Store
