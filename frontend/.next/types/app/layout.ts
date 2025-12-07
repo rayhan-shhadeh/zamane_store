@@ -1,4 +1,4 @@
-// File: C:\Users\rshha\Downloads\zamane-store\zamane-store\frontend\app\layout.tsx
+// File: C:\Users\rshha\Documents\VSCode\zamane_store\zamane_store\frontend\app\layout.tsx
 import * as entry from '../../../app/layout.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
