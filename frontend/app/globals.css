@@ -1,0 +1,165 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply font-body text-luxury-black bg-luxury-cream antialiased;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display font-medium;
+  }
+  
+  ::selection {
+    @apply bg-gold-400/30;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center px-6 py-3 
+           bg-luxury-black text-white font-medium
+           hover:bg-gold-500 transition-all duration-300
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  
+  .btn-secondary {
+    @apply inline-flex items-center justify-center px-6 py-3 
+           border border-luxury-black text-luxury-black font-medium
+           hover:bg-luxury-black hover:text-white transition-all duration-300;
+  }
+  
+  .btn-gold {
+    @apply inline-flex items-center justify-center px-6 py-3 
+           bg-gold-500 text-white font-medium
+           hover:bg-gold-600 transition-all duration-300;
+  }
+  
+  .input-field {
+    @apply w-full px-4 py-3 border border-primary-200 
+           bg-white focus:border-gold-500 focus:ring-1 focus:ring-gold-500
+           transition-all duration-200 outline-none;
+  }
+  
+  .container-custom {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  
+  .card {
+    @apply bg-white shadow-card hover:shadow-card-hover transition-shadow duration-300;
+  }
+  
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 text-xs font-medium;
+  }
+  
+  .badge-sale {
+    @apply badge bg-red-500 text-white;
+  }
+  
+  .badge-new {
+    @apply badge bg-gold-500 text-white;
+  }
+  
+  .link-underline {
+    @apply relative after:absolute after:bottom-0 after:left-0 
+           after:h-px after:w-0 after:bg-current after:transition-all 
+           after:duration-300 hover:after:w-full;
+  }
+  
+  .skeleton {
+    @apply animate-pulse bg-primary-200 rounded;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .animate-in {
+    animation: fadeUp 0.6s ease-out forwards;
+  }
+  
+  .delay-100 { animation-delay: 100ms; }
+  .delay-200 { animation-delay: 200ms; }
+  .delay-300 { animation-delay: 300ms; }
+  .delay-400 { animation-delay: 400ms; }
+  .delay-500 { animation-delay: 500ms; }
+}
+
+/* Custom scrollbar for desktop */
+@media (min-width: 768px) {
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: #f5f3ef;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: #d5cec1;
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: #bfb5a3;
+  }
+}
+
+/* Page transition */
+.page-transition-enter {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.page-transition-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms, transform 300ms;
+}
+
+.page-transition-exit {
+  opacity: 1;
+}
+
+.page-transition-exit-active {
+  opacity: 0;
+  transition: opacity 300ms;
+}
+
+/* Product image zoom effect */
+.product-image-container {
+  overflow: hidden;
+}
+
+.product-image-container img {
+  transition: transform 0.5s ease;
+}
+
+.product-image-container:hover img {
+  transform: scale(1.05);
+}
+
+/* RTL Support */
+[dir="rtl"] {
+  font-family: 'Plus Jakarta Sans', 'Tajawal', sans-serif;
+}
