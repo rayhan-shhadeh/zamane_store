@@ -1,13 +1,6 @@
 .env
-node_modules/
-dist/
-build/
 .env.local
 .env.example
-tsconfig.json
 .vscode/
-.DS_Store
-schema.prisma
-seeds/
-/prisma/migrations/
-/prisma
+dist/
+node_modules/
