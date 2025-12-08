@@ -74,6 +74,7 @@ export default function ProductPage() {
   const [product, setProduct] = useState<Product | null>(null);
   const [relatedProducts, setRelatedProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [cartLoading, setCartLoading] = useState(false);
   const [selectedImage, setSelectedImage] = useState(0);
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(
     null
@@ -81,7 +82,7 @@ export default function ProductPage() {
   const [quantity, setQuantity] = useState(1);
   const [isWishlisted, setIsWishlisted] = useState(false);
 
-  const { addItem, isLoading: cartLoading } = useCartStore();
+  const { addItem } = useCartStore();
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -107,7 +108,15 @@ export default function ProductPage() {
     if (!product) return;
 
     try {
-      await addItem(product.id, selectedVariant?.id, quantity);
+      await addItem({
+        productId: product.id,
+        variantId: selectedVariant?.id,
+        quantity,
+        name: product.name,
+        price: currentPrice,
+        image: product.images[0]?.url || "",
+        slug: product.slug,
+      });
       toast.success("Added to cart!", {
         icon: "🛒",
         style: { background: "#1a1a1a", color: "#fff" },
