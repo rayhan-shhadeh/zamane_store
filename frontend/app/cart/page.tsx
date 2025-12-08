@@ -1,80 +1,58 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Trash2, Minus, Plus, ShoppingBag, ArrowRight, 
-  ChevronRight, Tag, AlertCircle 
-} from 'lucide-react';
-import toast from 'react-hot-toast';
-import { useCartStore } from '@/stores/cartStore';
+import { useEffect } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Trash2,
+  Minus,
+  Plus,
+  ShoppingBag,
+  ArrowRight,
+  ChevronRight,
+  Tag,
+  AlertCircle,
+} from "lucide-react";
+import toast from "react-hot-toast";
+import { useCartStore } from "@/stores/cartStore";
 
 export default function CartPage() {
-  const { 
-    items, 
-    subtotal, 
-    itemCount, 
-    isLoading, 
-    fetchCart, 
-    updateQuantity, 
-    removeItem,
-    clearCart 
-  } = useCartStore();
+  const { items, subtotal, itemCount, updateQuantity, removeItem, clearCart } =
+    useCartStore();
 
   useEffect(() => {
-    fetchCart();
-  }, [fetchCart]);
-
+    // Cart is loaded from store on component mount
+  }, []);
+  type Item = {
+    price: number;
+    compareAtPrice?: number;
+  };
   const handleUpdateQuantity = async (itemId: string, newQuantity: number) => {
     if (newQuantity < 1) return;
     try {
       await updateQuantity(itemId, newQuantity);
     } catch (error) {
-      toast.error('Failed to update quantity');
+      toast.error("Failed to update quantity");
     }
   };
 
   const handleRemoveItem = async (itemId: string) => {
     try {
       await removeItem(itemId);
-      toast.success('Item removed from cart');
+      toast.success("Item removed from cart");
     } catch (error) {
-      toast.error('Failed to remove item');
+      toast.error("Failed to remove item");
     }
   };
 
   const shippingCost = subtotal > 200 ? 0 : 25;
   const total = subtotal + shippingCost;
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-luxury-pearl py-8">
-        <div className="container-custom">
-          <div className="grid lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2 space-y-4">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="bg-white p-6 flex gap-4">
-                  <div className="w-24 h-24 skeleton" />
-                  <div className="flex-1 space-y-2">
-                    <div className="h-5 skeleton w-3/4" />
-                    <div className="h-4 skeleton w-1/4" />
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="h-64 skeleton" />
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   if (items.length === 0) {
     return (
       <div className="min-h-screen bg-luxury-pearl flex items-center justify-center py-16">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-center"
@@ -84,8 +62,8 @@ export default function CartPage() {
           </div>
           <h1 className="font-display text-3xl mb-4">Your Cart is Empty</h1>
           <p className="text-primary-500 mb-8 max-w-md mx-auto">
-            Looks like you haven't added anything to your cart yet. 
-            Start shopping to fill it up!
+            Looks like you haven't added anything to your cart yet. Start
+            shopping to fill it up!
           </p>
           <Link href="/products" className="btn-primary">
             Continue Shopping
@@ -102,7 +80,9 @@ export default function CartPage() {
       <div className="bg-white border-b border-primary-200">
         <div className="container-custom py-4">
           <nav className="flex items-center gap-2 text-sm">
-            <Link href="/" className="text-primary-500 hover:text-primary-900">Home</Link>
+            <Link href="/" className="text-primary-500 hover:text-primary-900">
+              Home
+            </Link>
             <ChevronRight className="w-4 h-4 text-primary-400" />
             <span className="text-primary-900 font-medium">Shopping Cart</span>
           </nav>
@@ -121,7 +101,7 @@ export default function CartPage() {
             <AnimatePresence mode="popLayout">
               {items.map((item) => (
                 <motion.div
-                  key={item.id}
+                  key={item.productId}
                   layout
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -130,13 +110,16 @@ export default function CartPage() {
                 >
                   <div className="flex gap-4">
                     {/* Image */}
-                    <Link 
-                      href={`/products/${item.product.slug}`}
+                    <Link
+                      href={`/products/${item.slug}`}
                       className="relative w-24 h-24 md:w-32 md:h-32 flex-shrink-0 bg-primary-50"
                     >
                       <Image
-                        src={item.product.image || 'https://placehold.co/200x200/f5f5f5/999?text=No+Image'}
-                        alt={item.product.name}
+                        src={
+                          item.image ||
+                          "https://placehold.co/200x200/f5f5f5/999?text=No+Image"
+                        }
+                        alt={item.name}
                         fill
                         className="object-contain"
                       />
@@ -144,13 +127,13 @@ export default function CartPage() {
 
                     {/* Details */}
                     <div className="flex-1 min-w-0">
-                      <Link 
-                        href={`/products/${item.product.slug}`}
+                      <Link
+                        href={`/products/${item.slug}`}
                         className="font-medium hover:text-gold-600 transition-colors line-clamp-2"
                       >
-                        {item.product.name}
+                        {item.name}
                       </Link>
-                      
+
                       {item.variant && (
                         <p className="text-sm text-primary-500 mt-1">
                           {item.variant.name}
@@ -159,16 +142,24 @@ export default function CartPage() {
 
                       {/* Price */}
                       <div className="flex items-baseline gap-2 mt-2">
-                        <span className="font-bold">₪{item.price.toFixed(2)}</span>
-                        {item.product.compareAtPrice && item.product.compareAtPrice > item.price && (
-                          <span className="text-sm text-primary-400 line-through">
-                            ₪{item.product.compareAtPrice.toFixed(2)}
-                          </span>
-                        )}
+                        <span className="font-bold">
+                          ₪{item.price.toFixed(2)}
+                        </span>
+
+                        {typeof item === "object" &&
+                          item !== null &&
+                          "compareAtPrice" in item &&
+                          typeof item.compareAtPrice === "number" &&
+                          typeof item.price === "number" &&
+                          item.compareAtPrice > item.price && (
+                            <span className="text-sm text-primary-400 line-through">
+                              ₪{item.compareAtPrice.toFixed(2)}
+                            </span>
+                          )}
                       </div>
 
                       {/* Stock Warning */}
-                      {!item.product.inStock && (
+                      {"inStock" in item && !item.inStock && (
                         <div className="flex items-center gap-1 text-red-500 text-sm mt-2">
                           <AlertCircle className="w-4 h-4" />
                           Out of stock
@@ -180,7 +171,12 @@ export default function CartPage() {
                         {/* Quantity */}
                         <div className="flex items-center border border-primary-300">
                           <button
-                            onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
+                            onClick={() =>
+                              handleUpdateQuantity(
+                                item.productId,
+                                item.quantity - 1
+                              )
+                            }
                             className="p-2 hover:bg-primary-100 transition-colors"
                             disabled={item.quantity <= 1}
                           >
@@ -190,7 +186,12 @@ export default function CartPage() {
                             {item.quantity}
                           </span>
                           <button
-                            onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
+                            onClick={() =>
+                              handleUpdateQuantity(
+                                item.productId,
+                                item.quantity + 1
+                              )
+                            }
                             className="p-2 hover:bg-primary-100 transition-colors"
                           >
                             <Plus className="w-3 h-3" />
@@ -198,7 +199,7 @@ export default function CartPage() {
                         </div>
 
                         <button
-                          onClick={() => handleRemoveItem(item.id)}
+                          onClick={() => handleRemoveItem(item.productId)}
                           className="text-red-500 hover:text-red-600 p-2"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -209,7 +210,7 @@ export default function CartPage() {
                     {/* Desktop Actions */}
                     <div className="hidden md:flex flex-col items-end justify-between">
                       <button
-                        onClick={() => handleRemoveItem(item.id)}
+                        onClick={() => handleRemoveItem(item.productId)}
                         className="text-primary-400 hover:text-red-500 p-1 transition-colors"
                       >
                         <Trash2 className="w-5 h-5" />
@@ -219,7 +220,12 @@ export default function CartPage() {
                         {/* Quantity */}
                         <div className="flex items-center border border-primary-300">
                           <button
-                            onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
+                            onClick={() =>
+                              handleUpdateQuantity(
+                                item.productId,
+                                item.quantity - 1
+                              )
+                            }
                             className="p-2 hover:bg-primary-100 transition-colors"
                             disabled={item.quantity <= 1}
                           >
@@ -229,7 +235,12 @@ export default function CartPage() {
                             {item.quantity}
                           </span>
                           <button
-                            onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
+                            onClick={() =>
+                              handleUpdateQuantity(
+                                item.productId,
+                                item.quantity + 1
+                              )
+                            }
                             className="p-2 hover:bg-primary-100 transition-colors"
                           >
                             <Plus className="w-4 h-4" />
@@ -238,7 +249,7 @@ export default function CartPage() {
 
                         {/* Line Total */}
                         <span className="font-bold text-lg min-w-[80px] text-right">
-                          ₪{item.total.toFixed(2)}
+                          ₪{(item.price * item.quantity).toFixed(2)}
                         </span>
                       </div>
                     </div>
@@ -249,18 +260,18 @@ export default function CartPage() {
 
             {/* Continue Shopping */}
             <div className="flex justify-between items-center pt-4">
-              <Link 
-                href="/products" 
+              <Link
+                href="/products"
                 className="text-sm font-medium text-primary-600 hover:text-primary-900 flex items-center gap-2"
               >
                 <ArrowRight className="w-4 h-4 rotate-180" />
                 Continue Shopping
               </Link>
-              
+
               <button
                 onClick={() => {
                   clearCart();
-                  toast.success('Cart cleared');
+                  toast.success("Cart cleared");
                 }}
                 className="text-sm text-red-500 hover:text-red-600"
               >
@@ -288,9 +299,7 @@ export default function CartPage() {
                       className="input-field pl-10 text-sm"
                     />
                   </div>
-                  <button className="btn-secondary text-sm px-4">
-                    Apply
-                  </button>
+                  <button className="btn-secondary text-sm px-4">Apply</button>
                 </div>
               </div>
 
@@ -322,8 +331,8 @@ export default function CartPage() {
               </div>
 
               {/* Checkout Button */}
-              <Link 
-                href="/checkout" 
+              <Link
+                href="/checkout"
                 className="btn-primary w-full mt-6 flex items-center justify-center gap-2"
               >
                 Proceed to Checkout
